@@ -1,6 +1,7 @@
 pipeline {
     agent none
     stages {
+        
         stage('Maven Install') {
             agent {
                 docker {
@@ -10,6 +11,13 @@ pipeline {
             }
             steps {
                 sh 'mvn clean install'
+            }
+        }
+        
+        stage('Docker Build') {
+            agent any
+            steps {
+                sh 'docker build -t marcelillo/spring-petclinic:gestion-udem-jenkins .'
             }
         }
     }
