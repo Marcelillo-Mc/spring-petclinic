@@ -1,7 +1,6 @@
 pipeline {
     agent none
     stages {
-        
         stage('Maven Install') {
             agent {
                 docker {
@@ -18,6 +17,16 @@ pipeline {
             agent any
             steps {
                 sh 'docker build -t marcelillo/spring-petclinic:gestion-udem-jenkins .'
+            }
+        }
+        
+        stage('Docker Push') {
+            agent any
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh 'docker push marcelillo/spring-petclinic:gestion-udem-jenkins'
+                }
             }
         }
     }
